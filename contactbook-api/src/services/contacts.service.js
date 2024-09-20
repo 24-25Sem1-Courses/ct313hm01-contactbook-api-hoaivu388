@@ -1,5 +1,6 @@
 const knex = require('../database/knex')
 const Paginator = require('./paginator');
+const { unlink } = require('node:fs');
 
 class ContactService {
 
@@ -99,8 +100,8 @@ class ContactService {
             return null;
         }
         await this.contactRepository().where('id', id).del();
-        if(deleteContact.avatar && deleteContact.avatar.startsWith('/public/uploads')){
-            unlink(`.${deleteContact.avatar}`, (err) => {});
+        if(contact.avatar && contact.avatar.startsWith('/public/uploads')){
+            unlink(`.${contact.avatar}`, (err) => {});
         }
         return contact;
     }

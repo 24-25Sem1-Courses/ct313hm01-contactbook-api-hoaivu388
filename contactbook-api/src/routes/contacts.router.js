@@ -180,7 +180,7 @@ router.post('/', avatarUpload, contactsController.createContact);
  *                   type: string
  *                   description: A message indicating that no contacts were found
  */
-// router.delete('/', contactsController.deleteAllContacts);
+router.delete('/', contactsController.deleteAllContacts);
 router.all('/', errorsController.methodNotAllowed);
 
 /**
@@ -317,6 +317,6 @@ router.put('/:id', avatarUpload, contactsController.updateContact);
  *                   type: string
  *                   description: A message indicating that the contact was not found
  */
-// router.delete('/:id', contactsController.deleteContact);
-// router.all('/:id', errorsController.methodNotAllowed);
+router.delete('/:id', contactsController.deleteContact);
+router.all('/:id', errorsController.methodNotAllowed);
 };
