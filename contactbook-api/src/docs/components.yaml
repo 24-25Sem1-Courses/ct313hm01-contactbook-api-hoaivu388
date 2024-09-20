@@ -29,10 +29,34 @@ components:
           type: string
           readOnly: true
           description: The avatar of the contact
-        avatarURL:
+        avatarFile:
           type: string
           format: binary
           description: The avatar URL of the contact
+
+    PaginationMetadata:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          default: 0
+          description: The total number of items
+        firstPages:
+          type: integer
+          default: 1
+          description: The first page number
+        lastPages:
+          type: integer
+          default: 1
+          description: The last page number
+        page:
+          type: integer
+          default: 1
+          description: The current page number
+        limit:
+          type: integer
+          default: 5
+          description: The number of items per page
 
   responses:
     '200NoData':
@@ -61,3 +85,24 @@ components:
       required: true
       schema:
         type: integer
+        
+    limitParam:
+      name: limit
+      in: query
+      description: The number of records per page
+      schema:
+        type: integer
+        default: 5
+        minimum: 1
+        maximum: 100
+      required: false
+
+    pageParam:
+      name: page
+      in: query
+      description: The page number
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      required: false

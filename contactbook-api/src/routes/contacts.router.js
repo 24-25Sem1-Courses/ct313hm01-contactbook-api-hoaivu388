@@ -2,7 +2,7 @@ const express = require('express');
 const contactsController = require('../controller/contact.controller');
 const router = express.Router();
 const errorsController = require('../controller/errors.controller');
-
+const avatarUpload = require('../middlewares/avatar-upload.middleware');
 module.exports.setup = (app) => {
 app.use('/api/v1/contacts', router);
 
@@ -18,6 +18,8 @@ app.use('/api/v1/contacts', router);
  *         schema:
  *           type: string
  *         description: The name of the contact
+ *       - $ref: '#/components/parameters/limitParam'
+ *       - $ref: '#/components/parameters/pageParam'
  *       - in: query
  *         name: favorite
  *         schema:
@@ -45,12 +47,38 @@ app.use('/api/v1/contacts', router);
  *                       description: The list of contacts
  *                       items:
  *                         $ref: '#/components/schemas/Contact'
+ *                     metadata:
+ *                       $ref: '#/components/schemas/PaginationMetadata'
  *       400:
  *         description: Invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: An error message indicating the problem with the request
  *       404:
  *         description: No contacts found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating that no contacts were found
  */
-router.get('/', contactsController.getContactByFilter);
+router.get('/', contactsController.getContactsByFilter);
 
 /**
  * @swagger
@@ -83,8 +111,36 @@ router.get('/', contactsController.getContactByFilter);
  *                   properties:
  *                     contact:
  *                       $ref: '#/components/schemas/Contact'
+ *       400:
+ *         description: Invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: An error message indicating the problem with the request
+ *       409:
+ *         description: Contact already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating that the contact already exists
  */
-router.post('/', contactsController.createContact);
+router.post('/', avatarUpload, contactsController.createContact);
 
 /**
  * @swagger
@@ -109,8 +165,22 @@ router.post('/', contactsController.createContact);
  *                 message:
  *                   type: string
  *                   description: A message indicating the result of the operation
+ *       404:
+ *         description: No contacts found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating that no contacts were found
  */
-router.delete('/', contactsController.deleteAllContacts);
+// router.delete('/', contactsController.deleteAllContacts);
 router.all('/', errorsController.methodNotAllowed);
 
 /**
@@ -140,6 +210,20 @@ router.all('/', errorsController.methodNotAllowed);
  *                   properties:
  *                     contact:
  *                       $ref: '#/components/schemas/Contact'
+ *       404:
+ *         description: Contact not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating that the contact was not found
  */
 router.get('/:id', contactsController.getContact);
 
@@ -176,8 +260,22 @@ router.get('/:id', contactsController.getContact);
  *                   properties:
  *                     contact:
  *                       $ref: '#/components/schemas/Contact'
- */ 
-router.put('/:id', contactsController.updateContact);
+ *       404:
+ *         description: Contact not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating that the contact was not found
+ */
+router.put('/:id', avatarUpload, contactsController.updateContact);
 
 /**
  * @swagger
@@ -204,7 +302,21 @@ router.put('/:id', contactsController.updateContact);
  *                 message:
  *                   type: string
  *                   description: A message indicating the result of the operation
+ *       404:
+ *         description: Contact not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the response
+ *                   enum: [error]
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating that the contact was not found
  */
-router.delete('/:id', contactsController.deleteContact);
-router.all('/:id', errorsController.methodNotAllowed);
+// router.delete('/:id', contactsController.deleteContact);
+// router.all('/:id', errorsController.methodNotAllowed);
 };
